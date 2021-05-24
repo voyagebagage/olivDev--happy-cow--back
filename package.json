@@ -1,0 +1,27 @@
+{
+  "name": "olivDev--happy-cow--back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voyagebagage/olivDev--happy-cow--back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/voyagebagage/olivDev--happy-cow--back/issues"
+  },
+  "homepage": "https://github.com/voyagebagage/olivDev--happy-cow--back#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "mongoose": "^5.12.10"
+  }
+}
