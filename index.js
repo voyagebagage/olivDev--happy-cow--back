@@ -28,33 +28,66 @@ app.get("/restaurants", (req, res) => {
     const skip = Number(req.query.skip) || 0;
     const { name, description, type } = req.query;
     let filters;
+    const result = [];
 
     if (name || description || type) {
       filters = new RegExp(name || description || type, "i");
-      // filters.description = new RegExp(description, "i");
-      // filters.type = new RegExp(type, "i");
-    }
-    // console.log(filters);
-    for (let i = 0; i < restaurants.length; i++) {
-      const element = restaurants[i].name;
-      if (filters.test(element)) {
-        console.log(element);
+
+      for (let i = 0; i < restaurants.length; i++) {
+        let result1;
+        let result2;
+        let tempElem = [];
+        if (restaurants[i].description) {
+          tempElem.push(restaurants[i].description.split(" "));
+          // console.log("tempELM===>>>" + tempElem);
+          for (let k = 0; k < tempElem.length; k++) {
+            const elementDescr = tempElem[k];
+            if (filters.test(elementDescr)) {
+              // console.log("elementDescr---------------------------");
+              // if (restaurants[i].name !== restaurants[i - 1].name) {
+              if (restaurants[i].name) {
+                result1 = restaurants[i];
+              }
+
+              // console.log("result DESC ===>" + restaurants[i].name);
+              break;
+              // }
+            }
+          }
+        }
+        const element1 = restaurants[i].name;
+        const element3 = restaurants[i].type;
+        if (filters.test(element1) || filters.test(element3)) {
+          if (restaurants[i].name) {
+            result2 = restaurants[i];
+          }
+          // console.log(
+          //   "result NAME & TYPE ================================>" +
+          //     restaurants[i].name
+          // );
+        }
+        if (result1 || result2) {
+          if (result1 === result2) {
+            result.push(result1 || result2);
+            // console.log("result " + result);
+          } else if (result1) {
+            // console.log("result11111" + result1);
+            result.push(result1);
+          } else if (result2) {
+            // console.log("result22222" + result2);
+            result.push(result2);
+          }
+        }
       }
-
-      // element.push(
-      //   restaurants[i].match(
-      //     filters.name || filters.description || filters.type
-      //   )
-
-      // const result = restaurants.filter((restaurant) => restaurant === filters);
-      // console.log(result);
+      const searchResult = result.slice(skip, limit);
+      console.log(searchResult);
+      res.status(200).json(searchResult);
+    } else {
+      const homeScreenResult = restaurants.slice(skip, limit);
+      // console.log(restaurants);
+      // console.log(searchResult);
+      res.status(200).json(homeScreenResult);
     }
-    // const result = restaurants.filter((restaurant) => restaurant === filters);
-    // console.log(element);
-    const searchResult = restaurants.slice(skip, limit);
-    // console.log(restaurants);
-    // console.log(searchResult);
-    res.status(200).json(searchResult);
   } catch (error) {
     console.log(error);
   }
