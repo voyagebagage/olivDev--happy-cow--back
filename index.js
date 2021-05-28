@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 
 app.get("/restaurants", (req, res) => {
   try {
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 100;
     const skip = Number(req.query.skip) || 0;
     const { name, description, type } = req.query;
     let filters;
