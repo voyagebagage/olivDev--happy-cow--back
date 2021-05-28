@@ -74,7 +74,7 @@ app.get("/restaurants", (req, res) => {
           }
         }
       }
-      //SORTING by rating-[NO QUERY]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+      //SORTING by rating-[NO QUERY]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
       result.sort((a, b) => (a.rating < b.rating ? 1 : -1));
       // for (let j = 0; j < result.length; j++) {
       //   console.log(result[j].rating);
