@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 
 app.get("/restaurants", (req, res) => {
   try {
-    const limit = req.query.limit || 20;
+    const limit = Number(req.query.limit) || 20;
     const skip = Number(req.query.skip) || 0;
     const { name, type } = req.query;
     let filters;
@@ -33,7 +33,9 @@ app.get("/restaurants", (req, res) => {
     if (name || type) {
       //FILTERING by TYPE query<<<<<<<<<<<<<<<<XXXX---|START OF PROCESS|---XXXX>>>>>>>>>>>\\
       let tempType;
-      let strType = new RegExp(type);
+      let strType = new RegExp(type, "i");
+      // strType.toString().split(" ");
+
       if (type) {
         for (let l = 0; l < restaurants.length; l++) {
           tempType = restaurants[l].type;
@@ -46,9 +48,97 @@ app.get("/restaurants", (req, res) => {
         }
       } //<<<<<--------------------------------<<<<XXXX---|END OF PROCESS|---XXXX>>>>>>>>>>>>>\\
 
-      //FILTERING [USER SEARCH ON name, description, type KEYs + TYPE] query<<<<<<<<<XXXX---|START OF PROCESS|---XXXX>>>>>>>>>>>\\
+      //FILTERING SEARCH ON name, description KEYs  <<<<<<<<<XXXX---| |---XXXX>>>>>>>>>>>\\
       //IF query then without case, we split in case of many words<<<<<<<<<------------------------------------------------------\\
-      if (name || (name && type)) {
+      if (name) {
+        filters = name.toString().split(" "); //getting all the words of the search(query name) in one array
+        let matchesName;
+        for (let j = 0; j < restaurants.length; j++) {
+          for (let i = 0; i < filters.length; i++) {
+            if (restaurants[j].description) {
+              matchesName = restaurants.filter((searchWord) => {
+                rgx = new RegExp(filters[i], "i"); //regex insensitive to case of one by one words in the search bar
+                if (searchWord.name && searchWord.description) {
+                  return (
+                    //return restaurants matching from restaurant.name & .description
+                    searchWord.description.match(rgx) &&
+                    searchWord.name.match(rgx)
+                  );
+                }
+              });
+            }
+          }
+        }
+        for (let k = 0; k < matchesName.length; k++) {
+          console.log(matchesName[k].name);
+          console.log(" -------------");
+          console.log("|              |");
+          console.log(" -------------");
+          console.log(matchesName[k].description);
+          console.log(" -------------");
+          console.log("|              |");
+          console.log(" -------------");
+        }
+
+        // let matches = data.filter((title) => {
+        //   const regex = new RegExp(`^${term}`, "gi");
+        //   return regex.test(title.title);
+        // });
+        // for (let i = 0; i < restaurants.length; i++) {
+        //   let result1;
+        //   let result2;
+        //   let tempElem = [];
+        //   //TARGETING description Key<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+        //   // if (restaurants[i].description) {
+        //   //   tempElem.push(restaurants[i].description.split(" "));
+        //   //   for (let k = 0; k < tempElem.length; k++) {
+        //   //     const elementDescr = tempElem[k];
+        //   //     //TESTING description Key WORDS one by one<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+        //   //     if (filters.test(elementDescr)) {
+        //   //       //IF Match<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+        //   //       if (restaurants[i].name) {
+        //   //         result1 = restaurants[i];
+        //   //       }
+        //   //       //because one enough-<<<<<<<<<<<<<<<<<<<<<<<<<\\
+        //   //       break;
+        //   //     }
+        //   //   }
+        //   // }
+        //   const element1 = restaurants[i].name;
+        //   const element3 = restaurants[i].type;
+        //   //TARGETING name & type Key<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+        //   // if (filters.test(element1) || filters.test(element3)) {
+        //   //   if (restaurants[i].name) {
+        //   //     result2 = restaurants[i];
+        //   //   }
+        //   // }
+
+        //   //COLLECTING in one ARRAY<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+        //   // if (result1 || result2) {
+        //   //   if (result1 === result2) {
+        //   //     result.push(result1 || result2);
+        //   //   } else if (result1) {
+        //   //     result.push(result1);
+        //   //   } else if (result2) {
+        //   //     result.push(result2);
+        //   //   }
+        //   // }
+        // }
+      }
+      if (name && type) {
+        let tempType;
+        let strType = new RegExp(type, "i");
+        // strType.toString().split(" ");
+
+        for (let l = 0; l < restaurants.length; l++) {
+          tempType = restaurants[l].type;
+          if (strType.test(tempType)) {
+            if (restaurants[l].type) {
+              tempType = restaurants[l];
+              result.push(tempType);
+            }
+          }
+        }
         filters = new RegExp(name, "i");
         filters.toString().split(" ");
 
@@ -92,23 +182,36 @@ app.get("/restaurants", (req, res) => {
             }
           }
         }
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
+
         //REOMVING None TYPE query from SEARCH_-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
-        if (type) {
-          for (let l = 0; l < result.length; l++) {
-            if (result[l].type !== strType) {
-              result.pop();
+
+        for (let l = 0; l < result.length; l++) {
+          console.log("tout------------- ", result[l].type);
+
+          if (result[l].type !== strType && result[l].type !== filters) {
+            console.log("BEF----------", result[l].type);
+
+            result.pop();
+            for (let j = 0; j < result.length; j++) {
+              //<-----for testing-------------->
+              console.log("---------------------", result[j].type);
+              // console.log(delTab[j].type);
+              // console.log(result[j].rating);
             }
           }
         }
-      } //<<<<<--------------------------------<<<<XXXX---|END OF PROCESS|---XXXX>>>>>>>>>>>>>\\
+      }
+      //<<<<<--------------------------------<<<<XXXX---|END OF PROCESS|---XXXX>>>>>>>>>>>>>\\
       //SORTING by rating-[NO QUERY]<<<<<<<<<<<--------------------------------------<<<<<<<<<<\\
       result.sort((a, b) => (a.rating < b.rating ? 1 : -1));
 
-      // for (let j = 0; j < result.length; j++) { //<-----for testing-------------->
-      //   console.log(result[j].type);
-      //   // console.log(delTab[j].type);
-      //   // console.log(result[j].rating);
-      // }
+      for (let j = 0; j < result.length; j++) {
+        //<-----for testing-------------->
+        // console.log("xxxxxxxxxx------XXXXX", result[j].type);
+        // console.log(delTab[j].type);
+        // console.log(result[j].rating);
+      }
       //LIMITTING the OUTPUT<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
       const searchResult = result.slice(skip, limit);
       res.status(200).json(searchResult);
