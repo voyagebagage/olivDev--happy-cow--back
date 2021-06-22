@@ -31,12 +31,38 @@ app.get("/restaurants", (req, res) => {
     let filterType;
     let matchesName;
     let matchesType;
+    let returnTab = [];
     const result = [];
 
-    // const takeOffType = (eToFilter, eToRemove) => {
-    //   return eToFilter.filter((elem) => elem.type === eToRemove);
-    // };
-    // const takeOffNameDescription = (eToFilter, eToRemove) => {
+    const onlyKeepType = (eToFilter, eToKeep) => {
+      let eSplitted = eToKeep.split(" ");
+      if (eSplitted.length === 1) {
+        return eToFilter.filter((elem) => elem.type === eToKeep);
+      }
+      if (eSplitted.length > 1) {
+        for (let i = 0; i <= eSplitted.length - 1; i++) {
+          for (let j = 0; j <= eToFilter.length - 1; j++) {
+            if (eToFilter[j].type) {
+              let searchType = eToFilter[j].type
+                .split(" ")
+                .join("-")
+                .toLowerCase();
+
+              if (searchType.indexOf(eSplitted[i]) !== -1) {
+                matchesType = eToFilter[j];
+                returnTab.push(matchesType);
+                console.log("matchesType-------------------", matchesType.name);
+                console.log("matchesType-------------------", matchesType.type);
+                console.log("matchesType--legnth--", matchesType.length);
+                // result.push(matchesType);
+              }
+            }
+          }
+        }
+        return returnTab;
+      }
+    };
+    // const onlyKeepName = (eToFilter, eToRemove) => {
     //   return eToFilter.filter((elem) => {
     //     return (elem.name === eToRemove + elem.description) === eToRemove;
     //   });
@@ -57,7 +83,13 @@ app.get("/restaurants", (req, res) => {
               // console.log("SF   ", searchType);
               if (searchType.indexOf(filterType[i]) !== -1) {
                 matchesType = restaurants[j];
-                console.log("---------------------", matchesType.type);
+                result.push(matchesType);
+                // console.log("length", result.length);
+                // console.log("-J_", j);
+                // // console.log("LENGTH", matchesType.length);
+                // console.log("---------------------", matchesType.name);
+                // console.log("---------------------", matchesType.type);
+                // console.log("------------|-------/---");
               }
             }
           }
@@ -119,31 +151,51 @@ app.get("/restaurants", (req, res) => {
             }
           });
         }
+        // console.log(result);
+        if (type) {
+          let res = onlyKeepType(matchesName, type);
+          console.log("RES", res);
+          console.log("RES", res.length);
+          result.push(res);
+          for (let k = 0; k < res.length; k++) {
+            console.log(k);
+            console.log(res[k].name);
+            console.log(" -------------");
+            console.log("|              |");
+            console.log(" -------------");
+            console.log(res[k].type);
+            console.log(" -------------");
+            console.log("|              |");
+            console.log(" -------------");
+          }
+        }
+        console.log(
+          " ------________---XXXXXXXXX-----****************************************************----"
+        );
 
-        // let res = takeOffType(matchesName, type);
-        // for (let k = 0; k < res.length; k++) {
-        //   console.log(k);
-        //   console.log(res[k].name);
-        //   console.log(" -------------");
-        //   console.log("|              |");
-        //   console.log(" -------------");
-        //   console.log(res[k].type);
-        //   console.log(" -------------");
-        //   console.log("|              |");
-        //   console.log(" -------------");
-        // }
-        // for (let k = 0; k < matchesName.length; k++) {
-        //   console.log(k);
-        //   console.log(matchesName[k].name);
-        //   console.log(" xxxxxxxxxxxxx");
-        //   console.log("|              |");
-        //   console.log(" -------------");
-        //   console.log(matchesName[k].type);
-        //   console.log(" -------------");
-        //   console.log("|              |");
-        //   console.log(" xxxxxxxxxxxxx");
-        // }
+        for (let k = 0; k < matchesName.length; k++) {
+          console.log("-K-", k);
+          result.push(matchesName[k]);
 
+          console.log("LENGTH NAME", matchesName.length);
+          console.log(matchesName[k].name);
+          console.log(" xxxxxxxxxxxxx");
+          console.log("|              |");
+          console.log(" -------------");
+          console.log(matchesName[k].type);
+          console.log(" -------------");
+          console.log("|              |");
+          console.log(" xxxxxxxxxxxxx");
+          console.log(matchesName[k].description);
+          console.log(" -------------");
+          console.log("|              |");
+          console.log(" xxxxxxxxxxxxx");
+        }
+        console.log(
+          "---------------------------------------",
+          typeof matchesName
+        );
+        // result.push(matchesName);
         // let matches = data.filter((title) => {
         //   const regex = new RegExp(`^${term}`, "gi");
         //   return regex.test(title.title);
@@ -250,21 +302,21 @@ app.get("/restaurants", (req, res) => {
 
         //REOMVING None TYPE query from SEARCH_-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
 
-        for (let l = 0; l < result.length; l++) {
-          console.log("tout------------- ", result[l].type);
+        // for (let l = 0; l < result.length; l++) {
+        //   console.log("tout------------- ", result[l].type);
 
-          if (result[l].type !== strType && result[l].type !== filters) {
-            console.log("BEF----------", result[l].type);
+        //   if (result[l].type !== strType && result[l].type !== filters) {
+        //     console.log("BEF----------", result[l].type);
 
-            result.pop();
-            for (let j = 0; j < result.length; j++) {
-              //<-----for testing-------------->
-              console.log("---------------------", result[j].type);
-              // console.log(delTab[j].type);
-              // console.log(result[j].rating);
-            }
-          }
-        }
+        //     result.pop();
+        //     for (let j = 0; j < result.length; j++) {
+        //       //<-----for testing-------------->
+        //       console.log("---------------------", result[j].type);
+        //       // console.log(delTab[j].type);
+        //       // console.log(result[j].rating);
+        //     }
+        //   }
+        // }
       }
       //SORTING by rating-[NO QUERY]<<<<<<<<<<<--------------------------------------<<<<<<<<<<\\
       result.sort((a, b) => (a.rating < b.rating ? 1 : -1));
@@ -275,6 +327,7 @@ app.get("/restaurants", (req, res) => {
         // console.log(delTab[j].type);
         // console.log(result[j].rating);
       }
+      console.log("RESULT LENGTH", result.length);
       //LIMITTING the OUTPUT<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
       const searchResult = result.slice(skip, limit);
       res.status(200).json(searchResult);
