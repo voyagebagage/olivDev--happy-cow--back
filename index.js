@@ -27,8 +27,6 @@ app.get("/restaurants", (req, res) => {
     const limit = Number(req.query.limit) || 20;
     const skip = Number(req.query.skip) || 0;
     const { name, type } = req.query;
-    console.log(type, "<--------------------------------");
-    console.log(type.length, "<--------------------------------");
     let matchesName;
     let matchesType;
     let resType;
@@ -38,10 +36,6 @@ app.get("/restaurants", (req, res) => {
     const onlyKeepType = (eToFilter, eToKeep) => {
       let returnTab = [];
       let eSplitted = eToKeep.split(" "); //in case of more than one type, eToKeep becomes eSplitted
-      // let eSplitted = [];
-      // eSplitted.push(eToKeep);
-      // eSplitted.split(" ");
-      console.log(eSplitted, "=====================");
 
       if (eSplitted.length === 1) {
         return eToFilter.filter((elem) => elem.type === eToKeep);
@@ -60,24 +54,7 @@ app.get("/restaurants", (req, res) => {
               if (searchType.indexOf(eSplitted[i]) !== -1) {
                 //filtering
                 matchesType = eToFilter[j]; //collecting filtered objects
-                // console.log(eToFilter[i].name, "=====================");
-                // console.log(eToFilter[i].type, "=====================");
                 returnTab.push(matchesType); //format as expected on the output
-                // console.log("RT ONKETYPE", returnTab);
-                // console.log(
-                //   "======================================================"
-                // );
-                // console.log("matchesType-------------------", matchesType.name);
-                // console.log(
-                //   "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-                // );
-                // console.log("matchesType-------------------", matchesType.type);
-                // console.log(
-                //   "======================================================"
-                // );
-
-                // console.log("matchesType--legnth--returnTab", returnTab.length);
-                // result.push(matchesType);
               }
             }
           }
@@ -102,50 +79,32 @@ app.get("/restaurants", (req, res) => {
       }
       for (let k = 0; k < matchesName.length; k++) {
         returnTab.push(matchesName[k]); //format as expected on the output
-        // console.log("RT ONKENAME", matchesName[k].name);
       }
-      // console.log("--legnth--returnTab---------------Name", returnTab.length);
       return returnTab;
     };
 
     if (name || type) {
       if (type) {
         //if user starts with type
-        console.log(
-          " ------1-------------------------------------------------------"
-        );
         result = onlyKeepType(restaurants, type);
 
-        if (name) {
-          console.log(
-            " ------2-----------------------------------------------------"
-          );
+        if (name) { 
           result = onlyKeepName(result, name);
         }
       }
 
       if (name) {
         //if user starts with name
-        // console.log(
-        //   " -------3-----------------------------------------------------"
-        // );
         result = onlyKeepName(restaurants, name);
         if (type) {
-          // console.log(
-          //   " ------4-----------------------------------------------------"
-          // );
           result = onlyKeepType(result, type);
         }
       }
 
-      // console.log(
-      //   " ------*****************************************************************************----"
-      // );
+      
       //SORTING by rating-[NO QUERY]<<<<<<<<<<<--------------------------------------<<<<<<<<<<\\
-      // console.log(result);
       result.sort((a, b) => (a.rating < b.rating ? 1 : -1));
 
-      // console.log("RESULT LENGTH", result.length);
       //LIMITTING the OUTPUT<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\\
       const searchResult = result.slice(skip, limit);
       res.status(200).json(searchResult);
